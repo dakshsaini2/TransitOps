@@ -258,7 +258,10 @@ Import the provided SQL schema (if available).
 # 👥 Team
 
 Developed as part of a Hackathon project.
-
+**Daksh Saini**
+**Ankit Tangariya**
+**Akash Bisht**
+**Devansh Muthmaare**
 ---
 
 # 📄 License
