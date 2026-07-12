@@ -1,4 +1,9 @@
 # 🚛 TransitOps - Smart Transport Operations Platform
+Landing page:
+<img width="1915" height="981" alt="Screenshot 2026-07-12 173213" src="https://github.com/user-attachments/assets/7e71f49f-0b66-4928-8d0d-b6bfc53cb3ed" />
+<img width="1912" height="975" alt="Screenshot 2026-07-12 173224" src="https://github.com/user-attachments/assets/6053f5f5-e8eb-41be-bd11-6fb317d5b38b" />
+<img width="1876" height="941" alt="Screenshot 2026-07-12 173236" src="https://github.com/user-attachments/assets/fd561475-df86-4482-9e78-bb2891697bcb" />
+
 
 TransitOps is a full-stack fleet management and transport operations platform developed for a hackathon. It helps organizations manage vehicles, drivers, trips, maintenance, fuel, expenses, and analytics through a centralized dashboard.
 
