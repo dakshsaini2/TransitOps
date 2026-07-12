@@ -7,11 +7,10 @@ import { Plus, Search } from "lucide-react";
 
 const TABS = [
   { id: "all", label: "All Trips" },
-  { id: "scheduled", label: "Scheduled" },
-  { id: "dispatched", label: "Dispatched" },
-  { id: "in-progress", label: "In Progress" },
-  { id: "completed", label: "Completed" },
-  { id: "cancelled", label: "Cancelled" },
+  { id: "DRAFT", label: "Draft" },
+  { id: "DISPATCHED", label: "Dispatched" },
+  { id: "COMPLETED", label: "Completed" },
+  { id: "CANCELLED", label: "Cancelled" },
 ];
 
 export default function Trips() {

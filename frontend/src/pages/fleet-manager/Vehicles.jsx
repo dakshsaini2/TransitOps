@@ -12,10 +12,11 @@ export default function Vehicles() {
   const { deleteVehicle, actionLoading } = useVehicleActions();
 
   const getStatusBadge = (status) => {
-    switch(status) {
-      case 'available': return <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md text-xs font-medium">Available</span>;
-      case 'in-use': return <span className="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-xs font-medium">In Use</span>;
-      case 'maintenance': return <span className="px-2.5 py-1 bg-red-50 text-red-700 border border-red-200 rounded-md text-xs font-medium">Maintenance</span>;
+    switch(status?.toUpperCase()) {
+      case 'AVAILABLE': return <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md text-xs font-medium">Available</span>;
+      case 'ON_TRIP': return <span className="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-xs font-medium">On Trip</span>;
+      case 'IN_SHOP': return <span className="px-2.5 py-1 bg-red-50 text-red-700 border border-red-200 rounded-md text-xs font-medium">In Shop</span>;
+      case 'RETIRED': return <span className="px-2.5 py-1 bg-warm-100 text-warm-600 border border-warm-300 rounded-md text-xs font-medium">Retired</span>;
       default: return null;
     }
   };
@@ -49,9 +50,10 @@ export default function Vehicles() {
           <div className="flex gap-1">
             {[
               { id: "all", label: "All Vehicles" },
-              { id: "available", label: "Available" },
-              { id: "in-use", label: "In Use" },
-              { id: "maintenance", label: "Maintenance" }
+              { id: "AVAILABLE", label: "Available" },
+              { id: "ON_TRIP", label: "On Trip" },
+              { id: "IN_SHOP", label: "In Shop" },
+              { id: "RETIRED", label: "Retired" }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -90,8 +92,8 @@ export default function Vehicles() {
               <tr>
                 <th className="px-6 py-4">Vehicle Number</th>
                 <th className="px-6 py-4">Model & Type</th>
-                <th className="px-6 py-4">Capacity</th>
-                <th className="px-6 py-4">Fuel Type</th>
+                <th className="px-6 py-4">Capacity (kg)</th>
+                <th className="px-6 py-4">Odometer</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -119,14 +121,14 @@ export default function Vehicles() {
                 vehicles.map((v) => (
                   <tr key={v.id} className="hover:bg-warm-50 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-mono font-bold text-warm-700">{v.number}</div>
+                      <div className="font-mono font-bold text-warm-700">{v.registration_number}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-warm-800">{v.model} ({v.year})</div>
-                      <div className="text-xs text-warm-500">{v.type}</div>
+                      <div className="font-medium text-warm-800">{v.vehicle_name} - {v.model}</div>
+                      <div className="text-xs text-warm-500">{v.vehicle_type}</div>
                     </td>
-                    <td className="px-6 py-4 text-warm-600">{v.capacity} seats</td>
-                    <td className="px-6 py-4 text-warm-600">{v.fuelType}</td>
+                    <td className="px-6 py-4 text-warm-600">{v.max_load_capacity} kg</td>
+                    <td className="px-6 py-4 text-warm-600">{v.odometer} km</td>
                     <td className="px-6 py-4">{getStatusBadge(v.status)}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { EyeClosed, Eye } from "lucide-react";
+import { apiFetch } from "../utils/api";
 
 
 export default function SignupPage() {
@@ -10,6 +11,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const getStrength = (pw) => {
     if (!pw) return { level: 0, label: "", color: "" };
@@ -26,10 +28,27 @@ export default function SignupPage() {
 
   const strength = getStrength(password);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+    try {
+      const payload = {
+        full_name: name,
+        email: email,
+        password: password,
+        role: role.toUpperCase().replace(" ", "_"),
+      };
+      await apiFetch("/login", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      alert("Account created successfully. Please log in.");
+      navigate("/login");
+    } catch (err) {
+      alert(err.message || "Failed to create account");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

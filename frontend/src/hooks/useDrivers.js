@@ -1,19 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
+import { apiFetch } from "../utils/api";
+import "../types";
 
-// ── Mock Data ──────────────────────────────────────────────────────────────
-let MOCK_DRIVERS = [
-  { id: "D-101", name: "Rajesh Kumar", status: "on-trip", rating: 4.8, phone: "+91 98765 43210", license: "MH12 20100012345" },
-  { id: "D-102", name: "Suresh Patil", status: "available", rating: 4.9, phone: "+91 98765 43211", license: "MH14 20110023456" },
-  { id: "D-103", name: "Amit Sharma", status: "on-trip", rating: 4.6, phone: "+91 98765 43212", license: "MH09 20120034567" },
-  { id: "D-104", name: "Vikram Singh", status: "available", rating: 4.7, phone: "+91 98765 43213", license: "MH12 20150045678" },
-  { id: "D-105", name: "Prakash Jadhav", status: "off-duty", rating: 4.5, phone: "+91 98765 43214", license: "MH15 20180056789" },
-  { id: "D-106", name: "Sunil Desai", status: "on-trip", rating: 4.9, phone: "+91 98765 43215", license: "MH04 20190067890" },
-  { id: "D-107", name: "Mahesh Kadam", status: "available", rating: 4.4, phone: "+91 98765 43216", license: "MH12 20200078901" },
-  { id: "D-108", name: "Ramesh Pawar", status: "available", rating: 4.8, phone: "+91 98765 43217", license: "MH14 20210089012" },
-];
-
-const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-
+/**
+ * @param {Object} filters
+ * @param {string} [filters.status]
+ * @param {string} [filters.search]
+ * @returns {{drivers: import('../types').Driver[], loading: boolean, error: string|null, refetch: function}}
+ */
 export function useDrivers(filters = {}) {
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,20 +17,19 @@ export function useDrivers(filters = {}) {
     setLoading(true);
     setError(null);
     try {
-      await delay(350);
-      let result = [...MOCK_DRIVERS];
-
+      // Build query string for filters
+      const queryParams = new URLSearchParams();
       if (filters.status && filters.status !== "all") {
-        result = result.filter((d) => d.status === filters.status);
+        queryParams.append("status", filters.status.toUpperCase());
       }
       if (filters.search) {
-        const q = filters.search.toLowerCase();
-        result = result.filter(
-          (d) =>
-            d.name.toLowerCase().includes(q) ||
-            d.license.toLowerCase().includes(q)
-        );
+        queryParams.append("search", filters.search);
       }
+      
+      const queryString = queryParams.toString();
+      const endpoint = `api/drivers${queryString ? `?${queryString}` : ""}`;
+      
+      const result = await apiFetch(endpoint);
       setDrivers(result);
     } catch (err) {
       setError(err.message);
@@ -46,13 +39,16 @@ export function useDrivers(filters = {}) {
   }, [filters.status, filters.search]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDrivers();
   }, [fetchDrivers]);
 
   return { drivers, loading, error, refetch: fetchDrivers };
 }
 
+/**
+ * @param {number|string} id
+ * @returns {{driver: import('../types').Driver|null, loading: boolean, error: string|null, refetch: function}}
+ */
 export function useDriver(id) {
   const [driver, setDriver] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,10 +57,8 @@ export function useDriver(id) {
   const fetchDriver = useCallback(async () => {
     setLoading(true);
     try {
-      await delay(350);
-      const found = MOCK_DRIVERS.find((d) => d.id === id);
-      if (!found) throw new Error("Driver not found");
-      setDriver(found);
+      const result = await apiFetch(`api/drivers/${id}`);
+      setDriver(result);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,7 +68,6 @@ export function useDriver(id) {
 
   useEffect(() => {
     if (id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchDriver();
     }
   }, [fetchDriver, id]);
@@ -87,38 +80,48 @@ export function useDriverActions() {
 
   const createDriver = async (data) => {
     setActionLoading(true);
-    await delay(600);
-    const newDriver = {
-      id: `D-${(MOCK_DRIVERS.length + 101).toString()}`,
-      rating: 5.0, // Initial rating
-      status: "available",
-      ...data,
-    };
-    MOCK_DRIVERS = [newDriver, ...MOCK_DRIVERS];
-    setActionLoading(false);
-    return { success: true, data: newDriver };
+    try {
+      const result = await apiFetch("api/drivers", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      return { success: true, data: result };
+    } catch (err) {
+      return { success: false, message: err.message };
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const updateDriver = async (id, data) => {
     setActionLoading(true);
-    await delay(600);
-    const index = MOCK_DRIVERS.findIndex((d) => d.id === id);
-    if (index === -1) {
+    try {
+      const result = await apiFetch(`api/drivers/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+      return { success: true, data: result };
+    } catch (err) {
+      return { success: false, message: err.message };
+    } finally {
       setActionLoading(false);
-      return { success: false, message: "Driver not found" };
     }
-    MOCK_DRIVERS[index] = { ...MOCK_DRIVERS[index], ...data };
-    setActionLoading(false);
-    return { success: true, data: MOCK_DRIVERS[index] };
   };
 
   const deleteDriver = async (id) => {
     setActionLoading(true);
-    await delay(600);
-    MOCK_DRIVERS = MOCK_DRIVERS.filter((d) => d.id !== id);
-    setActionLoading(false);
-    return { success: true };
+    try {
+      await apiFetch(`api/drivers/${id}`, {
+        method: "DELETE",
+      });
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message };
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   return { actionLoading, createDriver, updateDriver, deleteDriver };
 }
+

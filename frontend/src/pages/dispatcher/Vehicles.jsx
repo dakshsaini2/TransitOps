@@ -9,10 +9,11 @@ export default function Vehicles() {
   const { vehicles, loading } = useVehicles({ status: activeTab, search: searchQuery });
 
   const getStatusBadge = (status) => {
-    switch(status) {
-      case 'available': return <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-medium">Available</span>;
-      case 'in-use': return <span className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-xs font-medium">In Use</span>;
-      case 'maintenance': return <span className="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded-full text-xs font-medium">Maintenance</span>;
+    switch(status?.toUpperCase()) {
+      case 'AVAILABLE': return <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-medium">Available</span>;
+      case 'ON_TRIP': return <span className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-xs font-medium">On Trip</span>;
+      case 'IN_SHOP': return <span className="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded-full text-xs font-medium">In Shop</span>;
+      case 'RETIRED': return <span className="px-2 py-0.5 bg-warm-100 text-warm-600 border border-warm-300 rounded-full text-xs font-medium">Retired</span>;
       default: return null;
     }
   };
@@ -31,9 +32,10 @@ export default function Vehicles() {
           <div className="flex gap-1">
             {[
               { id: "all", label: "All Vehicles" },
-              { id: "available", label: "Available" },
-              { id: "in-use", label: "In Use" },
-              { id: "maintenance", label: "Maintenance" }
+              { id: "AVAILABLE", label: "Available" },
+              { id: "ON_TRIP", label: "On Trip" },
+              { id: "IN_SHOP", label: "In Shop" },
+              { id: "RETIRED", label: "Retired" }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -79,8 +81,8 @@ export default function Vehicles() {
             <div key={v.id} className="bg-white border border-warm-300 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                  <div>
-                   <h3 className="font-mono text-lg font-bold text-warm-700 tracking-tight">{v.number}</h3>
-                   <p className="text-xs text-warm-500 mt-0.5">{v.model} ({v.year})</p>
+                   <h3 className="font-mono text-lg font-bold text-warm-700 tracking-tight">{v.registration_number}</h3>
+                   <p className="text-xs text-warm-500 mt-0.5">{v.vehicle_name} - {v.model}</p>
                  </div>
                  {getStatusBadge(v.status)}
               </div>
@@ -88,15 +90,15 @@ export default function Vehicles() {
               <div className="space-y-2 mt-4 pt-4 border-t border-warm-100 text-sm">
                 <div className="flex justify-between">
                   <span className="text-warm-400">Type</span>
-                  <span className="font-medium text-warm-600">{v.type}</span>
+                  <span className="font-medium text-warm-600">{v.vehicle_type}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-warm-400">Capacity</span>
-                  <span className="font-medium text-warm-600">{v.capacity} seats</span>
+                  <span className="font-medium text-warm-600">{v.max_load_capacity} kg</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-warm-400">Fuel</span>
-                  <span className="font-medium text-warm-600">{v.fuelType}</span>
+                  <span className="text-warm-400">Odometer</span>
+                  <span className="font-medium text-warm-600">{v.odometer} km</span>
                 </div>
               </div>
             </div>

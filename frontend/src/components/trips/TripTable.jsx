@@ -35,7 +35,7 @@ function ActionMenu({ trip, onAction }) {
             <Eye className="w-4 h-4 text-warm-400" /> View Details
           </button>
           
-          {trip.status === "scheduled" && (
+          {trip.status?.toUpperCase() === "DRAFT" && (
             <button
               onClick={(e) => { e.stopPropagation(); setOpen(false); onAction("edit", trip); }}
               className="w-full text-left px-4 py-2 text-sm text-warm-600 hover:bg-warm-50 flex items-center gap-2"
@@ -44,7 +44,7 @@ function ActionMenu({ trip, onAction }) {
             </button>
           )}
 
-          {trip.status === "scheduled" && (
+          {trip.status?.toUpperCase() === "DRAFT" && (
             <button
               onClick={(e) => { e.stopPropagation(); setOpen(false); onAction("dispatch", trip); }}
               className="w-full text-left px-4 py-2 text-sm text-amber-600 hover:bg-amber-50 flex items-center gap-2"
@@ -53,7 +53,7 @@ function ActionMenu({ trip, onAction }) {
             </button>
           )}
 
-          {trip.status === "in-progress" && (
+          {trip.status?.toUpperCase() === "DISPATCHED" && (
              <button
                onClick={(e) => { e.stopPropagation(); setOpen(false); onAction("complete", trip); }}
                className="w-full text-left px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 flex items-center gap-2"
@@ -62,7 +62,7 @@ function ActionMenu({ trip, onAction }) {
              </button>
           )}
 
-          {!["completed", "cancelled"].includes(trip.status) && (
+          {!["COMPLETED", "CANCELLED"].includes(trip.status?.toUpperCase()) && (
              <button
                onClick={(e) => { e.stopPropagation(); setOpen(false); onAction("cancel", trip); }}
                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-warm-100 mt-1 pt-1"
@@ -128,27 +128,27 @@ export default function TripTable({ trips, loading, onAction }) {
               className="hover:bg-warm-50 transition-colors cursor-pointer group"
             >
               <td className="px-6 py-4">
-                <span className="font-mono text-xs font-medium text-warm-600">{trip.id}</span>
+                <span className="font-mono text-xs font-medium text-warm-600">{trip.trip_number || trip.id}</span>
               </td>
               <td className="px-6 py-4">
-                <div className="text-sm font-medium text-warm-700">{trip.origin} → {trip.destination}</div>
+                <div className="text-sm font-medium text-warm-700">{trip.source} → {trip.destination}</div>
               </td>
               <td className="px-6 py-4">
-                <div className="text-sm text-warm-600">{trip.scheduledDate}</div>
-                <div className="text-xs text-warm-400">{trip.scheduledTime}</div>
+                <div className="text-sm text-warm-600">{trip.departure_time ? new Date(trip.departure_time).toLocaleDateString() : "TBD"}</div>
+                <div className="text-xs text-warm-400">{trip.departure_time ? new Date(trip.departure_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ""}</div>
               </td>
               <td className="px-6 py-4">
                 {trip.vehicle ? (
-                  <div className="text-sm font-mono text-warm-600">{trip.vehicle.number}</div>
+                  <div className="text-sm font-mono text-warm-600">{trip.vehicle.registration_number || `ID: ${trip.vehicle_id}`}</div>
                 ) : (
-                  <span className="text-xs text-warm-400 italic">Unassigned</span>
+                  <span className="text-xs text-warm-400 italic">ID: {trip.vehicle_id}</span>
                 )}
               </td>
               <td className="px-6 py-4">
                 {trip.driver ? (
-                   <div className="text-sm text-warm-600">{trip.driver.name}</div>
+                   <div className="text-sm text-warm-600">{trip.driver.full_name || `ID: ${trip.driver_id}`}</div>
                 ) : (
-                   <span className="text-xs text-warm-400 italic">Unassigned</span>
+                   <span className="text-xs text-warm-400 italic">ID: {trip.driver_id}</span>
                 )}
               </td>
               <td className="px-6 py-4">

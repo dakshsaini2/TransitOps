@@ -1,16 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-
-// ── Mock Data ──────────────────────────────────────────────────────────────
-let MOCK_USERS = [
-  { id: "U-001", name: "Alice Admin", email: "alice@transitops.com", role: "Admin", status: "Active" },
-  { id: "U-002", name: "Bob Dispatcher", email: "bob@transitops.com", role: "Dispatcher", status: "Active" },
-  { id: "U-003", name: "Charlie Fleet", email: "charlie@transitops.com", role: "Fleet Manager", status: "Active" },
-  { id: "U-004", name: "Diana Safety", email: "diana@transitops.com", role: "Safety Officer", status: "Active" },
-  { id: "U-005", name: "Eve Finance", email: "eve@transitops.com", role: "Financial Analyst", status: "Active" },
-  { id: "U-006", name: "Frank Dispatch", email: "frank@transitops.com", role: "Dispatcher", status: "Suspended" },
-];
-
-const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+import { apiFetch } from "../utils/api";
+import "../types";
 
 export function useUsers(filters = {}) {
   const [users, setUsers] = useState([]);
@@ -21,22 +11,19 @@ export function useUsers(filters = {}) {
     setLoading(true);
     setError(null);
     try {
-      await delay(350);
-      let result = [...MOCK_USERS];
-
+      const queryParams = new URLSearchParams();
       if (filters.role && filters.role !== "all") {
-        result = result.filter((u) => u.role === filters.role);
+        queryParams.append("role", filters.role.toUpperCase());
       }
       if (filters.search) {
-        const q = filters.search.toLowerCase();
-        result = result.filter(
-          (u) =>
-            u.name.toLowerCase().includes(q) ||
-            u.email.toLowerCase().includes(q) ||
-            u.id.toLowerCase().includes(q)
-        );
+        queryParams.append("search", filters.search);
       }
-      setUsers(result.sort((a, b) => a.id.localeCompare(b.id)));
+      
+      const queryString = queryParams.toString();
+      const endpoint = `api/users${queryString ? `?${queryString}` : ""}`;
+      
+      const result = await apiFetch(endpoint);
+      setUsers(result);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -45,7 +32,6 @@ export function useUsers(filters = {}) {
   }, [filters.role, filters.search]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUsers();
   }, [fetchUsers]);
 
@@ -58,12 +44,11 @@ export function useUser(id) {
   const [error, setError] = useState(null);
 
   const fetchUser = useCallback(async () => {
+    if (!id) return;
     setLoading(true);
     try {
-      await delay(350);
-      const found = MOCK_USERS.find((u) => u.id === id);
-      if (!found) throw new Error("User not found");
-      setUser(found);
+      const result = await apiFetch(`api/users/${id}`);
+      setUser(result);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -72,11 +57,8 @@ export function useUser(id) {
   }, [id]);
 
   useEffect(() => {
-    if (id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchUser();
-    }
-  }, [fetchUser, id]);
+    fetchUser();
+  }, [fetchUser]);
 
   return { user, loading, error, refetch: fetchUser };
 }
@@ -84,38 +66,26 @@ export function useUser(id) {
 export function useUserActions() {
   const [actionLoading, setActionLoading] = useState(false);
 
-  const createUser = async (data) => {
+  const performAction = async (endpoint, method = "POST", data = null) => {
     setActionLoading(true);
-    await delay(600);
-    const newUser = {
-      id: `U-${(MOCK_USERS.length + 100).toString().padStart(3, '0')}`,
-      ...data,
-    };
-    MOCK_USERS = [...MOCK_USERS, newUser];
-    setActionLoading(false);
-    return { success: true, data: newUser };
-  };
-
-  const updateUser = async (id, data) => {
-    setActionLoading(true);
-    await delay(600);
-    const index = MOCK_USERS.findIndex((u) => u.id === id);
-    if (index === -1) {
+    try {
+      const result = await apiFetch(endpoint, {
+        method,
+        body: data ? JSON.stringify(data) : undefined,
+      });
+      return { success: true, data: result };
+    } catch (err) {
+      return { success: false, message: err.message };
+    } finally {
       setActionLoading(false);
-      return { success: false, message: "User not found" };
     }
-    MOCK_USERS[index] = { ...MOCK_USERS[index], ...data };
-    setActionLoading(false);
-    return { success: true, data: MOCK_USERS[index] };
   };
 
-  const deleteUser = async (id) => {
-    setActionLoading(true);
-    await delay(600);
-    MOCK_USERS = MOCK_USERS.filter((u) => u.id !== id);
-    setActionLoading(false);
-    return { success: true };
+  return {
+    actionLoading,
+    createUser: (data) => performAction("api/users", "POST", data),
+    updateUser: (id, data) => performAction(`api/users/${id}`, "PUT", data),
+    deleteUser: (id) => performAction(`api/users/${id}`, "DELETE"),
+    toggleStatus: (id) => performAction(`api/users/${id}/toggle-status`, "POST"),
   };
-
-  return { actionLoading, createUser, updateUser, deleteUser };
 }

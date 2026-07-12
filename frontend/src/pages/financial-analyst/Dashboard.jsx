@@ -24,10 +24,10 @@ export default function Dashboard() {
     );
   }
 
-  const totalFuelCost = fuelLogs.reduce((acc, curr) => acc + curr.cost, 0);
-  const totalMaintenanceCost = maintenanceLogs.reduce((acc, curr) => acc + curr.cost, 0);
+  const totalFuelCost = fuelLogs.reduce((acc, curr) => acc + (curr.total_cost || 0), 0);
+  const totalMaintenanceCost = maintenanceLogs.reduce((acc, curr) => acc + (curr.cost || 0), 0);
   const totalOtherExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
-  
+
   const totalExpenses = totalFuelCost + totalMaintenanceCost + totalOtherExpenses;
 
   // Mock revenue for demonstration
@@ -94,7 +94,7 @@ export default function Dashboard() {
             <BarChart3 className="w-5 h-5 text-notion-blue" />
             <h2 className="text-lg font-semibold text-warm-700">Expense Breakdown</h2>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <div className="flex justify-between items-end mb-1">
@@ -102,7 +102,7 @@ export default function Dashboard() {
                 <span className="text-sm font-bold text-warm-800">₹{totalFuelCost.toLocaleString()}</span>
               </div>
               <div className="w-full bg-warm-100 rounded-full h-2">
-                <div className="bg-amber-500 h-2 rounded-full" style={{ width: `${(totalFuelCost/totalExpenses)*100}%` }}></div>
+                <div className="bg-amber-500 h-2 rounded-full" style={{ width: `${(totalFuelCost / totalExpenses) * 100}%` }}></div>
               </div>
             </div>
 
@@ -112,7 +112,7 @@ export default function Dashboard() {
                 <span className="text-sm font-bold text-warm-800">₹{totalMaintenanceCost.toLocaleString()}</span>
               </div>
               <div className="w-full bg-warm-100 rounded-full h-2">
-                <div className="bg-red-500 h-2 rounded-full" style={{ width: `${(totalMaintenanceCost/totalExpenses)*100}%` }}></div>
+                <div className="bg-red-500 h-2 rounded-full" style={{ width: `${(totalMaintenanceCost / totalExpenses) * 100}%` }}></div>
               </div>
             </div>
 
@@ -122,7 +122,7 @@ export default function Dashboard() {
                 <span className="text-sm font-bold text-warm-800">₹{totalOtherExpenses.toLocaleString()}</span>
               </div>
               <div className="w-full bg-warm-100 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${(totalOtherExpenses/totalExpenses)*100}%` }}></div>
+                <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${(totalOtherExpenses / totalExpenses) * 100}%` }}></div>
               </div>
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function Dashboard() {
             <FileText className="w-5 h-5 text-emerald-500" />
             <h2 className="text-lg font-semibold text-warm-700">Recent Operational Expenses</h2>
           </div>
-          
+
           <div className="space-y-3">
             {expenses.slice(0, 4).map(e => (
               <div key={e.id} className="flex justify-between items-center p-3 hover:bg-warm-50 rounded-lg border border-transparent hover:border-warm-200 transition-all">
@@ -144,7 +144,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-warm-800">{e.description}</p>
-                    <p className="text-xs text-warm-500">{e.date} • {e.category}</p>
+                    <p className="text-xs text-warm-500">{e.expense_date ? new Date(e.expense_date).toLocaleDateString() : 'N/A'} • {e.expense_type}</p>
                   </div>
                 </div>
                 <div className="text-sm font-bold text-warm-800">

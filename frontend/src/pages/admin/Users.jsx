@@ -11,23 +11,21 @@ export default function Users() {
   const { users, loading } = useUsers({ search: searchQuery, role: roleFilter });
   const { deleteUser, actionLoading } = useUserActions();
 
-  const getStatusBadge = (status) => {
-    switch(status) {
-      case 'Active': return <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md text-xs font-medium">Active</span>;
-      case 'Suspended': return <span className="px-2.5 py-1 bg-red-50 text-red-700 border border-red-200 rounded-md text-xs font-medium">Suspended</span>;
-      default: return null;
-    }
+  const getStatusBadge = (isActive) => {
+    if (isActive) return <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md text-xs font-medium">Active</span>;
+    return <span className="px-2.5 py-1 bg-red-50 text-red-700 border border-red-200 rounded-md text-xs font-medium">Suspended</span>;
   };
 
   const getRoleBadge = (role) => {
     let colorClass = "bg-warm-100 text-warm-700";
-    if (role === "Admin") colorClass = "bg-amber-100 text-amber-800 font-bold";
-    if (role === "Dispatcher") colorClass = "bg-blue-50 text-blue-700";
-    if (role === "Fleet Manager") colorClass = "bg-purple-50 text-purple-700";
-    if (role === "Safety Officer") colorClass = "bg-emerald-50 text-emerald-700";
-    if (role === "Financial Analyst") colorClass = "bg-teal-50 text-teal-700";
+    if (role === "ADMIN") colorClass = "bg-amber-100 text-amber-800 font-bold";
+    if (role === "DISPATCHER") colorClass = "bg-blue-50 text-blue-700";
+    if (role === "FLEET_MANAGER") colorClass = "bg-purple-50 text-purple-700";
+    if (role === "SAFETY_OFFICER") colorClass = "bg-emerald-50 text-emerald-700";
+    if (role === "FINANCIAL_ANALYST") colorClass = "bg-teal-50 text-teal-700";
     
-    return <span className={`px-2 py-1 text-xs rounded border border-black/5 ${colorClass}`}>{role}</span>;
+    const displayRole = role ? role.replace('_', ' ') : 'Unknown';
+    return <span className={`px-2 py-1 text-xs rounded border border-black/5 ${colorClass}`}>{displayRole}</span>;
   }
 
   const handleDelete = async (id, name) => {
@@ -60,11 +58,11 @@ export default function Users() {
               className="px-4 py-2 bg-warm-50 border border-warm-300 rounded-lg text-sm text-warm-700 outline-none min-w-[150px]"
            >
              <option value="all">All Roles</option>
-             <option value="Admin">Admin</option>
-             <option value="Dispatcher">Dispatcher</option>
-             <option value="Fleet Manager">Fleet Manager</option>
-             <option value="Safety Officer">Safety Officer</option>
-             <option value="Financial Analyst">Financial Analyst</option>
+             <option value="ADMIN">Admin</option>
+             <option value="DISPATCHER">Dispatcher</option>
+             <option value="FLEET_MANAGER">Fleet Manager</option>
+             <option value="SAFETY_OFFICER">Safety Officer</option>
+             <option value="FINANCIAL_ANALYST">Financial Analyst</option>
            </select>
         </div>
 
@@ -115,13 +113,13 @@ export default function Users() {
                   <tr key={u.id} className="hover:bg-warm-50 transition-colors">
                     <td className="px-6 py-4 font-mono font-medium text-warm-700">{u.id}</td>
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-warm-800">{u.name}</div>
+                      <div className="font-semibold text-warm-800">{u.full_name}</div>
                       <div className="text-xs text-warm-500">{u.email}</div>
                     </td>
                     <td className="px-6 py-4">
                        {getRoleBadge(u.role)}
                     </td>
-                    <td className="px-6 py-4">{getStatusBadge(u.status)}</td>
+                    <td className="px-6 py-4">{getStatusBadge(u.is_active)}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
@@ -132,7 +130,7 @@ export default function Users() {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button 
-                          onClick={() => handleDelete(u.id, u.name)}
+                          onClick={() => handleDelete(u.id, u.full_name)}
                           disabled={actionLoading}
                           className="p-1.5 text-warm-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
                           title="Delete User"
