@@ -47,7 +47,7 @@ function App() {
 
           {/* Protected App Routes */}
           <Route element={<AppLayout />}>
-            <Route index element={<Navigate to="dashboard" />} />
+
             <Route path="dashboard" element={<RoleRouter path="dashboard" />} />
             
             {/* Dispatcher Paths */}

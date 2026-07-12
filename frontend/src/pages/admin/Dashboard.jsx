@@ -19,9 +19,9 @@ export default function Dashboard() {
     );
   }
 
-  const activeUsers = users.filter(u => u.status === "Active").length;
-  const adminCount = users.filter(u => u.role === "Admin").length;
-  const dispatchCount = users.filter(u => u.role === "Dispatcher").length;
+  const activeUsers = users.filter(u => u.is_active).length;
+  const adminCount = users.filter(u => u.role === "ADMIN").length;
+  const dispatchCount = users.filter(u => u.role === "DISPATCHER").length;
 
   return (
     <div className="space-y-6">
@@ -85,13 +85,14 @@ export default function Dashboard() {
         <div className="bg-white border border-warm-300 rounded-xl p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-warm-700 mb-6 border-b border-warm-200 pb-4">Role Distribution</h2>
           <div className="space-y-4">
-            {["Admin", "Dispatcher", "Fleet Manager", "Safety Officer", "Financial Analyst"].map(role => {
+            {["ADMIN", "DISPATCHER", "FLEET_MANAGER", "SAFETY_OFFICER", "FINANCIAL_ANALYST"].map(role => {
                const count = users.filter(u => u.role === role).length;
-               const percentage = ((count / users.length) * 100).toFixed(0);
+               const percentage = users.length > 0 ? ((count / users.length) * 100).toFixed(0) : 0;
+               const displayRole = role.replace('_', ' ');
                return (
                  <div key={role}>
                     <div className="flex justify-between items-end mb-1">
-                      <span className="text-sm font-medium text-warm-700">{role}</span>
+                      <span className="text-sm font-medium text-warm-700 capitalize">{displayRole.toLowerCase()}</span>
                       <span className="text-sm font-medium text-warm-500">{count} users</span>
                     </div>
                     <div className="w-full bg-warm-100 rounded-full h-2">

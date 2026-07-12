@@ -40,10 +40,11 @@ export default function Expenses() {
               className="px-4 py-2 bg-warm-50 border border-warm-300 rounded-lg text-sm text-warm-700 outline-none"
            >
              <option value="all">All Categories</option>
-             <option value="Tolls">Tolls</option>
-             <option value="Permits">Permits</option>
-             <option value="Food & Lodging">Food & Lodging</option>
-             <option value="Miscellaneous">Miscellaneous</option>
+             <option value="TOLLS">Tolls</option>
+             <option value="PERMITS">Permits</option>
+             <option value="LODGING">Lodging</option>
+             <option value="MAINTENANCE">Maintenance</option>
+             <option value="OTHER">Other</option>
            </select>
         </div>
 
@@ -67,7 +68,7 @@ export default function Expenses() {
                 <th className="px-6 py-4">ID & Date</th>
                 <th className="px-6 py-4">Description</th>
                 <th className="px-6 py-4">Category</th>
-                <th className="px-6 py-4">Trip Ref</th>
+                <th className="px-6 py-4">Vehicle ID</th>
                 <th className="px-6 py-4 text-right">Amount</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -96,17 +97,17 @@ export default function Expenses() {
                   <tr key={e.id} className="hover:bg-warm-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-mono text-warm-700 font-medium">{e.id}</div>
-                      <div className="text-xs text-warm-500">{e.date}</div>
+                      <div className="text-xs text-warm-500">{e.expense_date ? new Date(e.expense_date).toLocaleDateString() : 'N/A'}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-warm-800 font-medium">{e.description}</div>
                     </td>
                     <td className="px-6 py-4">
-                       <span className="px-2 py-1 bg-warm-100 text-warm-700 text-xs rounded-full font-medium">{e.category}</span>
+                       <span className="px-2 py-1 bg-warm-100 text-warm-700 text-xs rounded-full font-medium">{e.expense_type}</span>
                     </td>
-                    <td className="px-6 py-4 font-mono text-warm-500">{e.tripId || "-"}</td>
+                    <td className="px-6 py-4 font-mono text-warm-500">{e.vehicle_id || "-"}</td>
                     <td className="px-6 py-4 text-right font-bold text-warm-800">
-                      ₹{e.amount.toLocaleString()}
+                      ₹{e.amount ? e.amount.toLocaleString() : '0'}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button 

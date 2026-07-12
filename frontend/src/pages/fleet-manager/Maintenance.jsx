@@ -16,10 +16,9 @@ export default function Maintenance() {
   const loading = mLoading || vLoading;
 
   const getStatusBadge = (status) => {
-    switch(status) {
-      case 'completed': return <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md text-xs font-medium">Completed</span>;
-      case 'in-progress': return <span className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-md text-xs font-medium">In Progress</span>;
-      case 'pending': return <span className="px-2.5 py-1 bg-warm-100 text-warm-700 border border-warm-300 rounded-md text-xs font-medium">Pending</span>;
+    switch(status?.toUpperCase()) {
+      case 'COMPLETED': return <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md text-xs font-medium">Completed</span>;
+      case 'ACTIVE': return <span className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-md text-xs font-medium">Active</span>;
       default: return null;
     }
   };
@@ -51,9 +50,8 @@ export default function Maintenance() {
           <div className="flex gap-1">
             {[
               { id: "all", label: "All Logs" },
-              { id: "pending", label: "Pending" },
-              { id: "in-progress", label: "In Progress" },
-              { id: "completed", label: "Completed" }
+              { id: "ACTIVE", label: "Active" },
+              { id: "COMPLETED", label: "Completed" }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -92,7 +90,7 @@ export default function Maintenance() {
                 <th className="px-6 py-4">ID & Date</th>
                 <th className="px-6 py-4">Vehicle</th>
                 <th className="px-6 py-4">Description</th>
-                <th className="px-6 py-4">Mechanic</th>
+                <th className="px-6 py-4">Dates</th>
                 <th className="px-6 py-4">Cost</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
@@ -120,28 +118,28 @@ export default function Maintenance() {
                 </tr>
               ) : (
                 logs.map((log) => {
-                  const vehicle = vehicles.find(v => v.id === log.vehicleId);
+                  const vehicle = vehicles.find(v => v.id === log.vehicle_id);
                   return (
                     <tr key={log.id} className="hover:bg-warm-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="font-mono text-warm-700 font-medium">{log.id}</div>
-                        <div className="text-xs text-warm-500">{log.date}</div>
+                        <div className="text-xs text-warm-500">{log.start_date ? new Date(log.start_date).toLocaleDateString() : 'N/A'}</div>
                       </td>
                       <td className="px-6 py-4">
                         {vehicle ? (
                           <Link to={`/vehicles/${vehicle.id}`} className="font-mono font-bold text-notion-blue hover:underline">
-                            {vehicle.number}
+                            {vehicle.registration_number || vehicle.number || `ID: ${log.vehicle_id}`}
                           </Link>
                         ) : (
-                          <span className="font-mono font-bold text-warm-700">{log.vehicleId}</span>
+                          <span className="font-mono font-bold text-warm-700">{log.vehicle_id}</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-warm-800 font-medium line-clamp-1">{log.description}</div>
-                        <div className="text-xs text-warm-500">{log.type}</div>
+                        <div className="text-xs text-warm-500">{log.maintenance_type}</div>
                       </td>
-                      <td className="px-6 py-4 text-warm-600">{log.mechanic}</td>
-                      <td className="px-6 py-4 font-medium text-warm-700">₹{log.cost.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-warm-600">{log.end_date ? new Date(log.end_date).toLocaleDateString() : 'Active'}</td>
+                      <td className="px-6 py-4 font-medium text-warm-700">₹{log.cost ? log.cost.toLocaleString() : '0'}</td>
                       <td className="px-6 py-4">{getStatusBadge(log.status)}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">

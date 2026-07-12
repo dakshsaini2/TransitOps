@@ -9,10 +9,11 @@ export default function Drivers() {
   const { drivers, loading } = useDrivers({ status: activeTab, search: searchQuery });
 
   const getStatusBadge = (status) => {
-    switch(status) {
-      case 'available': return <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-medium">Available</span>;
-      case 'on-trip': return <span className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-xs font-medium">On Trip</span>;
-      case 'off-duty': return <span className="px-2 py-0.5 bg-warm-100 text-warm-600 border border-warm-300 rounded-full text-xs font-medium">Off Duty</span>;
+    switch(status?.toUpperCase()) {
+      case 'AVAILABLE': return <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-medium">Available</span>;
+      case 'ON_TRIP': return <span className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-xs font-medium">On Trip</span>;
+      case 'OFF_DUTY': return <span className="px-2 py-0.5 bg-warm-100 text-warm-600 border border-warm-300 rounded-full text-xs font-medium">Off Duty</span>;
+      case 'SUSPENDED': return <span className="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded-full text-xs font-medium">Suspended</span>;
       default: return null;
     }
   };
@@ -31,9 +32,10 @@ export default function Drivers() {
           <div className="flex gap-1">
             {[
               { id: "all", label: "All Drivers" },
-              { id: "available", label: "Available" },
-              { id: "on-trip", label: "On Trip" },
-              { id: "off-duty", label: "Off Duty" }
+              { id: "AVAILABLE", label: "Available" },
+              { id: "ON_TRIP", label: "On Trip" },
+              { id: "OFF_DUTY", label: "Off Duty" },
+              { id: "SUSPENDED", label: "Suspended" }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -81,12 +83,12 @@ export default function Drivers() {
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-warm-100 border border-warm-200 flex items-center justify-center text-warm-600 font-bold">
-                       {d.name.charAt(0)}
+                       {d.full_name?.charAt(0) || '?'}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-warm-700">{d.name}</h3>
+                      <h3 className="font-semibold text-warm-700">{d.full_name}</h3>
                       <div className="flex items-center gap-1 text-xs text-warm-500">
-                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" /> {d.rating}
+                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" /> {d.safety_score ? (d.safety_score / 20).toFixed(1) : "0.0"}
                       </div>
                     </div>
                   </div>
@@ -95,11 +97,11 @@ export default function Drivers() {
                 
                 <div className="space-y-1.5 text-sm mt-4">
                   <div className="flex items-center gap-2 text-warm-600">
-                    <Phone className="w-4 h-4 text-warm-400" /> {d.phone}
+                    <Phone className="w-4 h-4 text-warm-400" /> {d.contact_number || 'N/A'}
                   </div>
                   <div className="flex justify-between items-center text-xs mt-2">
                     <span className="text-warm-400">License:</span>
-                    <span className="font-mono text-warm-600">{d.license}</span>
+                    <span className="font-mono text-warm-600">{d.license_number}</span>
                   </div>
                 </div>
               </div>

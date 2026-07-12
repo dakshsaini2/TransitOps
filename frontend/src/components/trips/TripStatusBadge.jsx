@@ -1,33 +1,26 @@
 const STATUS_CONFIG = {
-  scheduled: {
-    label: "Scheduled",
+  DRAFT: {
+    label: "Draft / Scheduled",
     bg: "bg-blue-50",
     text: "text-blue-700",
     dot: "bg-blue-500",
     border: "border-blue-200",
   },
-  dispatched: {
-    label: "Dispatched",
+  DISPATCHED: {
+    label: "Dispatched / Active",
     bg: "bg-amber-50",
     text: "text-amber-700",
-    dot: "bg-amber-500",
+    dot: "bg-amber-500 animate-pulse-dot",
     border: "border-amber-200",
   },
-  "in-progress": {
-    label: "In Progress",
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
-    dot: "bg-emerald-500 animate-pulse-dot",
-    border: "border-emerald-200",
-  },
-  completed: {
+  COMPLETED: {
     label: "Completed",
     bg: "bg-warm-100",
     text: "text-warm-500",
     dot: "bg-warm-400",
     border: "border-warm-300",
   },
-  cancelled: {
+  CANCELLED: {
     label: "Cancelled",
     bg: "bg-red-50",
     text: "text-red-700",
@@ -37,7 +30,7 @@ const STATUS_CONFIG = {
 };
 
 export default function TripStatusBadge({ status, size = "sm" }) {
-  const config = STATUS_CONFIG[status] || STATUS_CONFIG.scheduled;
+  const config = STATUS_CONFIG[status?.toUpperCase()] || STATUS_CONFIG.DRAFT;
 
   const sizeClasses =
     size === "lg"

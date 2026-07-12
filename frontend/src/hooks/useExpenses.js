@@ -1,14 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-
-// ── Mock Data ──────────────────────────────────────────────────────────────
-let MOCK_EXPENSES = [
-  { id: "E-101", date: "2026-07-05", category: "Tolls", amount: 1500, description: "Mumbai-Pune Expressway Tolls", tripId: "TRP-2023001" },
-  { id: "E-102", date: "2026-07-06", category: "Food & Lodging", amount: 2500, description: "Driver night halt", tripId: "TRP-2023002" },
-  { id: "E-103", date: "2026-07-08", category: "Permits", amount: 4500, description: "Inter-state border permit", tripId: "TRP-2023004" },
-  { id: "E-104", date: "2026-07-10", category: "Miscellaneous", amount: 800, description: "Parking fees", tripId: "TRP-2023005" },
-];
-
-const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+import { apiFetch } from "../utils/api";
+import "../types";
 
 export function useExpenses(filters = {}) {
   const [expenses, setExpenses] = useState([]);
@@ -19,60 +11,83 @@ export function useExpenses(filters = {}) {
     setLoading(true);
     setError(null);
     try {
-      await delay(350);
-      let result = [...MOCK_EXPENSES];
-
+      const queryParams = new URLSearchParams();
       if (filters.category && filters.category !== "all") {
-        result = result.filter((e) => e.category === filters.category);
+        queryParams.append("expense_type", filters.category.toUpperCase());
       }
       if (filters.search) {
-        const q = filters.search.toLowerCase();
-        result = result.filter(
-          (e) =>
-            e.description.toLowerCase().includes(q) ||
-            e.id.toLowerCase().includes(q) ||
-            (e.tripId && e.tripId.toLowerCase().includes(q))
-        );
+        queryParams.append("search", filters.search);
       }
-      setExpenses(result.sort((a, b) => new Date(b.date) - new Date(a.date)));
+      if (filters.vehicleId) {
+        queryParams.append("vehicle_id", filters.vehicleId);
+      }
+      
+      const queryString = queryParams.toString();
+      const endpoint = `api/expenses${queryString ? `?${queryString}` : ""}`;
+      
+      const result = await apiFetch(endpoint);
+      setExpenses(result);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [filters.category, filters.search]);
+  }, [filters.category, filters.search, filters.vehicleId]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchExpenses();
   }, [fetchExpenses]);
 
   return { expenses, loading, error, refetch: fetchExpenses };
 }
 
+export function useExpense(id) {
+  const [expense, setExpense] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchExpense = useCallback(async () => {
+    if (!id) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await apiFetch(`api/expenses/${id}`);
+      setExpense(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchExpense();
+  }, [fetchExpense]);
+
+  return { expense, loading, error, refetch: fetchExpense };
+}
 export function useExpenseActions() {
   const [actionLoading, setActionLoading] = useState(false);
 
-  const createExpense = async (data) => {
+  const performAction = async (endpoint, method = "POST", data = null) => {
     setActionLoading(true);
-    await delay(600);
-    const newExpense = {
-      id: `E-${(MOCK_EXPENSES.length + 101).toString()}`,
-      ...data,
-      amount: Number(data.amount) || 0,
-    };
-    MOCK_EXPENSES = [newExpense, ...MOCK_EXPENSES];
-    setActionLoading(false);
-    return { success: true, data: newExpense };
+    try {
+      const result = await apiFetch(endpoint, {
+        method,
+        body: data ? JSON.stringify(data) : undefined,
+      });
+      return { success: true, data: result };
+    } catch (err) {
+      return { success: false, message: err.message };
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const deleteExpense = async (id) => {
-    setActionLoading(true);
-    await delay(600);
-    MOCK_EXPENSES = MOCK_EXPENSES.filter((e) => e.id !== id);
-    setActionLoading(false);
-    return { success: true };
+  return {
+    actionLoading,
+    createExpense: (data) => performAction("api/expenses", "POST", data),
+    updateExpense: (id, data) => performAction(`api/expenses/${id}`, "PUT", data),
+    deleteExpense: (id) => performAction(`api/expenses/${id}`, "DELETE"),
   };
-
-  return { actionLoading, createExpense, deleteExpense };
 }

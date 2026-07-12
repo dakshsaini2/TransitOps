@@ -55,8 +55,7 @@ export default function FuelLogs() {
               <tr>
                 <th className="px-6 py-4">Log ID & Date</th>
                 <th className="px-6 py-4">Vehicle</th>
-                <th className="px-6 py-4">Station</th>
-                <th className="px-6 py-4 text-right">Volume</th>
+                <th className="px-6 py-4 text-right">Volume (Gallons)</th>
                 <th className="px-6 py-4 text-right">Total Cost</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -82,26 +81,23 @@ export default function FuelLogs() {
                 </tr>
               ) : (
                 logs.map((log) => {
-                  const vehicle = vehicles.find(v => v.id === log.vehicleId);
+                  const vehicle = vehicles.find(v => v.id === log.vehicle_id);
                   return (
                     <tr key={log.id} className="hover:bg-warm-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="font-mono text-warm-700 font-medium">{log.id}</div>
-                        <div className="text-xs text-warm-500">{log.date}</div>
+                        <div className="text-xs text-warm-500">{log.fuel_date ? new Date(log.fuel_date).toLocaleDateString() : 'N/A'}</div>
                       </td>
                       <td className="px-6 py-4">
                         <span className="font-mono font-bold text-warm-700">
-                          {vehicle ? vehicle.number : log.vehicleId}
+                          {vehicle ? (vehicle.registration_number || vehicle.number) : `ID: ${log.vehicle_id}`}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="text-warm-800 font-medium">{log.station}</div>
-                      </td>
                       <td className="px-6 py-4 text-right font-medium text-warm-700">
-                        {log.liters} L
+                        {log.gallons} Gal
                       </td>
                       <td className="px-6 py-4 text-right font-bold text-warm-800">
-                        ₹{log.cost.toLocaleString()}
+                        ₹{log.total_cost ? log.total_cost.toLocaleString() : '0'}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <button 
