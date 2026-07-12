@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { EyeClosed, Eye } from "lucide-react";
-
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,11 +9,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+    setTimeout(() => {
+      login(role);
+      navigate("/dashboard");
+      setLoading(false);
+    }, 800);
   };
 
   return (

@@ -82,3 +82,42 @@ html {
 @utility delay-800 {
   animation-delay: 0.8s;
 }
+
+/* Dispatcher module animations */
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@utility animate-slide-in-left {
+  animation: slide-in-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+@utility animate-slide-in-right {
+  animation: slide-in-right 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+@utility animate-slide-down {
+  animation: slide-down 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+@utility animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+  background-size: 200% 100%;
+}
+@utility animate-scale-in {
+  animation: scale-in 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
