@@ -1,99 +1,86 @@
-# 🚚 TransitOps – Smart Transport Operations Platform
+# 🚛 TransitOps - Smart Transport Operations Platform
 
-A full-stack Transport Management System (TMS) built for an **8-hour hackathon** using **FastAPI** and **React**. The platform digitizes transport operations by managing vehicles, drivers, trips, maintenance, fuel expenses, and operational analytics through a modern web dashboard.
-
----
-
-## 📖 Overview
-
-TransitOps helps logistics companies replace spreadsheets and manual record keeping with a centralized digital platform.
-
-The system enables administrators, dispatchers, and managers to efficiently manage transport operations while enforcing business rules and providing real-time insights.
+TransitOps is a full-stack fleet management and transport operations platform developed for a hackathon. It helps organizations manage vehicles, drivers, trips, maintenance, fuel, expenses, and analytics through a centralized dashboard.
 
 ---
 
-## ✨ Features
+## 📌 Features
 
 ### 🔐 Authentication & Authorization
+- Secure Login with Email & Password
 - JWT Authentication
-- Role-Based Access Control (Admin, Dispatcher, Fleet Manager)
-- Secure Password Hashing
-- Login & Logout
+- Role-Based Access Control (RBAC)
+- Protected Routes
 
-### 🚛 Vehicle Management
-- Add, Update, Delete Vehicles
-- Vehicle Status
-  - Available
-  - In Transit
-  - Maintenance
+### 🚗 Vehicle Management
+- Add, Edit, Delete Vehicles
+- Unique Registration Number Validation
+- Vehicle Status Management
 - Vehicle Search & Filters
 
 ### 👨‍✈️ Driver Management
-- Driver Registration
-- License Details
-- License Expiry Tracking
-- Driver Availability Status
+- Driver CRUD Operations
+- License Expiry Validation
+- Driver Availability Tracking
+- Safety Score Management
 
-### 📦 Trip Management
-- Create Trips
-- Assign Driver
-- Assign Vehicle
-- Route Management
-- Trip Status
-- Delivery Tracking
+### 🚚 Trip Management
+- Create & Manage Trips
+- Vehicle and Driver Assignment
+- Cargo Weight Validation
+- Trip Lifecycle
+  - Draft
+  - Dispatched
+  - Completed
+  - Cancelled
+- Automatic Vehicle & Driver Status Updates
 
-### 🛠 Maintenance Management
-- Schedule Maintenance
+### 🔧 Maintenance
+- Vehicle Maintenance Records
+- Automatic Vehicle Status Update (In Shop)
 - Maintenance History
-- Cost Tracking
-- Vehicle Service Records
 
 ### ⛽ Fuel & Expense Management
-- Fuel Logs
-- Expense Tracking
-- Cost Reports
-- Monthly Expenses
+- Fuel Log Tracking
+- Maintenance Expenses
+- Toll & Other Operational Expenses
+- Total Operational Cost Calculation
 
-### 📊 Dashboard & Analytics
-- Total Vehicles
-- Active Drivers
-- Trips Completed
-- Revenue Overview
-- Fuel Consumption
-- Maintenance Cost
-- Interactive Charts
-
-### 📄 Reports
+### 📊 Dashboard & Reports
+- Active Vehicles
+- Available Vehicles
+- Vehicles in Maintenance
+- Active Trips
+- Drivers On Duty
+- Fleet Utilization
+- Fuel Efficiency
+- Operational Cost
+- Vehicle ROI
 - CSV Export
-- PDF Reports
-- Operational Summary
 
 ---
 
-# 🏗 Tech Stack
-
-## Backend
-
-- FastAPI
-- SQLAlchemy
-- Alembic
-- SQLite
-- JWT Authentication
-- Pydantic
-- Uvicorn
+# 🛠 Tech Stack
 
 ## Frontend
-
-- React
+- React 18
 - Vite
-- Tailwind CSS
+- React Router DOM
 - Axios
-- React Router
-- Recharts
+- Tailwind CSS
+- React Hook Form
+- Chart.js
+- React Toastify
+
+## Backend
+- Node.js
+- Express.js
+- JWT Authentication
+- bcrypt.js
+- Express Validator
 
 ## Database
-
-- SQLite
+- MySQL
 
 ---
 
@@ -102,117 +89,111 @@ The system enables administrators, dispatchers, and managers to efficiently mana
 ```
 TransitOps/
 │
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── auth/
-│   │   ├── database/
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   └── main.py
-│   │
-│   ├── uploads/
-│   ├── alembic/
-│   ├── requirements.txt
-│   └── .env
-│
 ├── frontend/
 │   ├── src/
-│   │   ├── assets/
 │   │   ├── components/
+│   │   ├── pages/
+│   │   ├── layouts/
+│   │   ├── services/
 │   │   ├── context/
 │   │   ├── hooks/
-│   │   ├── layouts/
-│   │   ├── pages/
-│   │   ├── services/
+│   │   ├── assets/
 │   │   ├── App.jsx
 │   │   └── main.jsx
-│   │
 │   ├── package.json
 │   └── vite.config.js
+│
+├── backend/
+│   ├── controllers/
+│   ├── routes/
+│   ├── models/
+│   ├── middleware/
+│   ├── config/
+│   ├── utils/
+│   ├── app.js
+│   ├── server.js
+│   └── package.json
 │
 └── README.md
 ```
 
 ---
 
-# ⚙ Installation
+# ⚙️ Installation
 
 ## Clone Repository
 
 ```bash
 git clone https://github.com/yourusername/TransitOps.git
-
 cd TransitOps
 ```
 
 ---
 
-# Backend Setup
+## Backend Setup
 
-### Create Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-### Activate
-
-Windows
+Navigate to backend folder
 
 ```bash
-venv\Scripts\activate
+cd backend
 ```
 
-Linux/Mac
-
-```bash
-source venv/bin/activate
-```
-
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Run Backend
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Backend runs on
-
-```
-http://localhost:8000
-```
-
----
-
-# Frontend Setup
-
-Move into frontend
-
-```bash
-cd frontend
-```
-
-Install packages
+Install dependencies
 
 ```bash
 npm install
 ```
 
-Run
+Create a `.env` file
+
+```env
+PORT=5000
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=transitops
+DB_USER=root
+DB_PASSWORD=your_password
+
+JWT_SECRET=your_secret_key
+JWT_EXPIRES_IN=1d
+```
+
+Run backend
 
 ```bash
 npm run dev
 ```
 
-Frontend runs on
+Backend will run on
+
+```
+http://localhost:5000
+```
+
+---
+
+## Frontend Setup
+
+Navigate to frontend
+
+```bash
+cd frontend
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Run development server
+
+```bash
+npm run dev
+```
+
+Frontend will run on
 
 ```
 http://localhost:5173
@@ -220,125 +201,66 @@ http://localhost:5173
 
 ---
 
-# API Documentation
+# 🗄 Database
 
-FastAPI automatically generates API documentation.
+Create MySQL database
 
-Swagger UI
-
-```
-http://localhost:8000/docs
+```sql
+CREATE DATABASE transitops;
 ```
 
-ReDoc
-
-```
-http://localhost:8000/redoc
-```
+Import the provided SQL schema (if available).
 
 ---
 
-# Database
+# 🔄 Workflow
 
-Default database
-
-```
-SQLite
-```
-
-Migration
-
-```bash
-alembic upgrade head
-```
-
----
-
-# Security
-
-- JWT Authentication
-- Password Hashing (bcrypt)
-- Protected APIs
-- Role-Based Authorization
-- Input Validation
-- Secure Environment Variables
+1. Login
+2. Add Vehicles
+3. Add Drivers
+4. Create Trip
+5. Dispatch Trip
+6. Complete Trip
+7. Add Fuel Log
+8. Add Expenses
+9. Schedule Maintenance
+10. View Dashboard & Reports
 
 ---
 
-# Dashboard
+# 📊 Business Rules
 
-The dashboard provides:
-
-- Vehicle Overview
-- Driver Overview
-- Active Trips
-- Maintenance Alerts
-- Fuel Expenses
-- Revenue Analytics
-- Recent Activities
-- Charts & Reports
+- Vehicle registration number must be unique.
+- Retired or In Shop vehicles cannot be assigned to trips.
+- Drivers with expired licenses cannot be assigned.
+- Suspended drivers cannot be assigned.
+- Cargo weight must not exceed vehicle capacity.
+- Dispatching a trip marks both vehicle and driver as **On Trip**.
+- Completing a trip restores both vehicle and driver to **Available**.
+- Cancelling a dispatched trip restores vehicle and driver status.
+- Active maintenance automatically changes vehicle status to **In Shop**.
+- Closing maintenance restores vehicle status unless it is retired.
 
 ---
 
-# Future Improvements
+# 🚀 Future Enhancements
 
-- Live GPS Tracking
-- Route Optimization
+- PDF Report Export
 - Email Notifications
-- SMS Alerts
-- AI-Based Predictive Maintenance
-- Mobile Application
-- Barcode/QR Scanning
-- Cloud Deployment
-- Multi-Tenant Support
+- Vehicle Document Upload
+- Dark Mode
+- Advanced Analytics
+- Live GPS Tracking
+- Search & Advanced Filters
 
 ---
 
-# Screenshots
+# 👥 Team
 
-```
-Add screenshots here
-
-docs/images/dashboard.png
-
-docs/images/login.png
-
-docs/images/vehicles.png
-
-docs/images/trips.png
-```
+Developed as part of a Hackathon project.
 
 ---
 
-# Contributors
+# 📄 License
 
-- **Daksh Saini**
-- **Ankit Tangariya**
-- **Devansh Saini**
-- **Akash Bisht**
-- Hackathon Team
-
----
-
-# License
-
-This project is developed for educational and hackathon purposes.
-
----
-
-# Acknowledgements
-
-- FastAPI
-- React
-- SQLAlchemy
-- Tailwind CSS
-- Vite
-- Open Source Community
-
----
-
-## ⭐ Support
-
-If you like this project, don't forget to **⭐ Star** the repository.
-
-Happy Coding! 🚀# TransitOps
+This project is intended for educational and hackathon purposes.
