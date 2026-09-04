@@ -11,7 +11,7 @@ TransitOps is a full-stack fleet management and transport operations platform de
 
 ## 📌 Features
 
-### 🔐 Authentication & Authorization
+### 🔐 Authentication & Authorization 
 - Secure Login with Email & Password
 - JWT Authentication
 - Role-Based Access Control (RBAC)
